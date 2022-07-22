@@ -1,4 +1,6 @@
+
 {% load static  %}
+
 <nav class="navbar navbar-expand-lg bg-dark navbar-dark">
   <img src="{% static 'images/log.jpg' %}" alt="" height="100" width="150">
   <div class="container-fluid">
@@ -21,4 +23,7 @@
       </form> -->
     </div>
   </div>
+
+  <span class="text-white"> {{ request.user }}</span> &nbsp; &nbsp;
+  <span><a href="{% url 'logout' %}">Logout</a></span>
 </nav>
