@@ -3,6 +3,7 @@ from .models import *
 from .forms import OrderForm
 
 from django.http import HttpResponse
+from django.forms import inlineformset_factory # to use for multiple form
 # Create your views here.
 
 def home(request):
@@ -31,15 +32,19 @@ def customer(request,pk_test):
 	context = {'customer':customer, 'orders': orders, 'order_count': order_count}
 	return render(request, 'accounts/customer.html', context)
 
-def CreateOrder(request):
-	form = OrderForm()
+def CreateOrder(request, pk):
+	OrderFormSet = inlineformset_factory(Customer, Order, fields=('product', 'status'))
+	customer = Customer.objects.get(id=pk)
+	formset = OrderFormSet(queryset=Order.objects.none(),instance=customer)
+	# form = OrderForm(initial={'customer': customer})
 	if request.method == 'POST':
-		form = OrderForm(request.POST)
-		if form.is_valid():
-			form.save()
+		# form = OrderForm(request.POST)
+		formset = OrderFormSet(request.POST, instance=customer)
+		if formset.is_valid():
+			formset.save()
 			return redirect('/')
 
-	context = {'form': form}
+	context = {'formset': formset }
 	return render(request, 'accounts/order_form.html', context)
 
 def UpdateOrder(request, pk):
